@@ -107,4 +107,23 @@ class ItemsMapperTest {
         val item = dto.toDomain()
         assertTrue(item.hasStats)
     }
+
+    @Test
+    fun `sellRaw strips HTML and extracts numeric sell value with coin type`() {
+        val dto = ItemDto(
+            name = "Wood",
+            sell = "<span class=\"coin\" title=\"60 Copper Coins\" data-sort-value=\"60\">" +
+                "<span class=\"cc\">60<i> CC</i></span></span>"
+        )
+        val item = dto.toDomain()
+        assertEquals("60 CC", item.sellRaw)
+    }
+
+    @Test
+    fun `sellRaw is null when sell is blank or null`() {
+        val dto1 = ItemDto(name = "X", sell = "")
+        val dto2 = ItemDto(name = "Y", sell = null)
+        assertNull(dto1.toDomain().sellRaw)
+        assertNull(dto2.toDomain().sellRaw)
+    }
 }
