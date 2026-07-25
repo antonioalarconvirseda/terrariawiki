@@ -2,15 +2,18 @@ package com.terrariawiki.features.items.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.terrariawiki.features.items.data.ItemsRepository
 import com.terrariawiki.features.items.domain.GetItemByNameUseCase
 import com.terrariawiki.features.items.domain.Item
+import com.terrariawiki.features.items.domain.Recipe
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ItemDetailViewModel(
-    private val getItemByName: GetItemByNameUseCase
+    private val getItemByName: GetItemByNameUseCase,
+    private val repository: ItemsRepository
 ) : ViewModel() {
 
     sealed interface UiState {
@@ -22,13 +25,16 @@ class ItemDetailViewModel(
     private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
+    private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
+    val recipes: StateFlow<List<Recipe>> = _recipes.asStateFlow()
+
     fun load(name: String) {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             getItemByName(name).fold(
                 onSuccess = { item ->
-                    _uiState.value = if (item != null) UiState.Ready(item)
-                    else UiState.Error("No se encontró «$name»")
+                    if (item != null) _uiState.value = UiState.Ready(item)
+                    else _uiState.value = UiState.Error("No se encontró «$name»")
                 },
                 onFailure = { error ->
                     _uiState.value = UiState.Error(
@@ -36,6 +42,13 @@ class ItemDetailViewModel(
                     )
                 }
             )
+            getItemByName(name).onSuccess { item ->
+                if (item != null) {
+                    repository.getRecipes(item.name).onSuccess { recipes ->
+                        _recipes.value = recipes
+                    }
+                }
+            }
         }
     }
 }

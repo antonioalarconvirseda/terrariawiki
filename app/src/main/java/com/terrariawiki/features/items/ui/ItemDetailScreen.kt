@@ -56,6 +56,7 @@ fun ItemDetailScreen(
     viewModel: ItemDetailViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val recipes by viewModel.recipes.collectAsStateWithLifecycle()
 
     LaunchedEffect(name) {
         viewModel.load(name)
@@ -98,14 +99,17 @@ fun ItemDetailScreen(
                     message = state.message,
                     onRetry = { viewModel.load(name) }
                 )
-                is ItemDetailViewModel.UiState.Ready -> ItemDetailContent(item = state.item)
+                is ItemDetailViewModel.UiState.Ready -> ItemDetailContent(
+                    item = state.item,
+                    recipes = recipes
+                )
             }
         }
     }
 }
 
 @Composable
-private fun ItemDetailContent(item: Item) {
+private fun ItemDetailContent(item: Item, recipes: List<Recipe> = emptyList()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -122,6 +126,45 @@ private fun ItemDetailContent(item: Item) {
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+            }
+        }
+
+        if (recipes.isNotEmpty()) {
+            DetailSection(title = "Receta") {
+                recipes.forEach { recipe ->
+                    if (recipes.size > 1) {
+                        Text(
+                            text = "Receta ${recipes.indexOf(recipe) + 1}",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    Text(
+                        text = "Se craftea ${recipe.amount} × ${recipe.result}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Medium
+                    )
+                    if (recipe.station.isNotBlank()) {
+                        Text(
+                            text = "Estación: ${recipe.station}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    recipe.ingredients.forEach { (name, qty) ->
+                        Text(
+                            text = "  • $name × $qty",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    if (recipe != recipes.last()) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
             }
         }
 
