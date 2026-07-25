@@ -1,5 +1,6 @@
 package com.terrariawiki.features.items.ui
 
+import app.cash.turbine.test
 import com.terrariawiki.features.items.data.ItemsRepository
 import com.terrariawiki.features.items.domain.SearchResult
 import io.mockk.coEvery
@@ -7,7 +8,9 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -48,6 +51,7 @@ class SearchViewModelTest {
     fun `search with empty query stays Idle`() = runTest(testDispatcher) {
         val vm = SearchViewModel(repository)
         vm.onQueryChange("")
+        runCurrent()
         assertEquals(SearchViewModel.UiState.Idle, vm.uiState.value)
     }
 
@@ -56,11 +60,19 @@ class SearchViewModelTest {
         coEvery { repository.searchAll("terra", 25) } returns Result.success(sampleResults)
         val vm = SearchViewModel(repository)
 
-        vm.onQueryChange("terra")
-        val state = vm.uiState.value
-        assertTrue("expected Ready, got $state", state is SearchViewModel.UiState.Ready)
-        val ready = state as SearchViewModel.UiState.Ready
-        assertEquals(2, ready.results.size)
+        vm.uiState.test {
+            assertEquals(SearchViewModel.UiState.Idle, awaitItem())
+            vm.onQueryChange("terra")
+            advanceTimeBy(300)
+            runCurrent()
+            var state = awaitItem()
+            while (state !is SearchViewModel.UiState.Ready) {
+                state = awaitItem()
+            }
+            val ready = state as SearchViewModel.UiState.Ready
+            assertEquals(2, ready.results.size)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
@@ -68,9 +80,17 @@ class SearchViewModelTest {
         coEvery { repository.searchAll("xyzzz", 25) } returns Result.success(emptyList())
         val vm = SearchViewModel(repository)
 
-        vm.onQueryChange("xyzzz")
-        val state = vm.uiState.value
-        assertTrue("expected Empty, got $state", state is SearchViewModel.UiState.Empty)
+        vm.uiState.test {
+            assertEquals(SearchViewModel.UiState.Idle, awaitItem())
+            vm.onQueryChange("xyzzz")
+            advanceTimeBy(300)
+            runCurrent()
+            var state = awaitItem()
+            while (state !is SearchViewModel.UiState.Empty) {
+                state = awaitItem()
+            }
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
@@ -78,9 +98,17 @@ class SearchViewModelTest {
         coEvery { repository.searchAll("error", 25) } returns Result.failure(RuntimeException("boom"))
         val vm = SearchViewModel(repository)
 
-        vm.onQueryChange("error")
-        val state = vm.uiState.value
-        assertTrue("expected Error, got $state", state is SearchViewModel.UiState.Error)
-        assertEquals("boom", (state as SearchViewModel.UiState.Error).message)
+        vm.uiState.test {
+            assertEquals(SearchViewModel.UiState.Idle, awaitItem())
+            vm.onQueryChange("error")
+            advanceTimeBy(300)
+            runCurrent()
+            var state = awaitItem()
+            while (state !is SearchViewModel.UiState.Error) {
+                state = awaitItem()
+            }
+            assertEquals("boom", (state as SearchViewModel.UiState.Error).message)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 }
