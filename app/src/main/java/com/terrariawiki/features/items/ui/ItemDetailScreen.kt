@@ -1,5 +1,7 @@
 package com.terrariawiki.features.items.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,10 +33,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.terrariawiki.core.network.TerrariaApiConfig
 import com.terrariawiki.features.items.domain.Item
 import com.terrariawiki.features.items.ui.components.ErrorState
 import com.terrariawiki.features.items.ui.components.ItemThumbnail
@@ -109,36 +113,9 @@ private fun ItemDetailContent(item: Item) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            )
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                ItemThumbnail(item = item, size = 128.dp)
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = item.name,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                RarityChip(rarity = item.rarity)
-                if (item.types.isNotEmpty()) {
-                    ItemTypeChips(types = item.types)
-                }
-            }
-        }
+        DetailHeader(item = item)
 
-        if (item.tooltip != null && item.tooltip.isNotBlank()) {
+        if (!item.tooltip.isNullOrBlank()) {
             DetailSection(title = "Descripción") {
                 Text(
                     text = item.tooltip,
@@ -152,27 +129,145 @@ private fun ItemDetailContent(item: Item) {
             DetailSection(title = "Estadísticas") {
                 StatRow(label = "Daño", value = item.damage?.toString())
                 StatRow(label = "Defensa", value = item.defense?.toString())
-                StatRow(label = "Retroceso", value = item.knockback?.let { "%.2f".format(it) })
-                StatRow(label = "Velocidad de uso", value = item.useTime?.let { "$it ticks" })
-            }
-        }
-
-        if (item.sellRaw != null) {
-            DetailSection(title = "Venta") {
-                Text(
-                    text = item.sellRaw,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                StatRow(
+                    label = "Retroceso",
+                    value = item.knockback?.let { "%.2f".format(it) }
                 )
+                StatRow(label = "Velocidad de uso", value = item.useTime?.toString())
+                if (item.isWeapon) {
+                    StatRow(
+                        label = "Probabilidad de crítico",
+                        value = item.critical?.let { "$it%" }
+                    )
+                    StatRow(
+                        label = "Velocidad de proyectil",
+                        value = item.velocity?.let { "%.1f".format(it) }
+                    )
+                }
+                if (item.autoSwing) {
+                    StatRow(label = "Ataque automático", value = "Sí")
+                }
             }
         }
 
-        DetailSection(title = "Identificadores") {
-            StatRow(label = "ID interno", value = item.internalName)
-            StatRow(label = "ID wiki", value = item.wikiId?.toString())
+        val inventoryRows = listOfNotNull(
+            item.stack?.takeIf { it.isNotBlank() && it != "1" }
+                ?.let { "Hasta $it" }
+                ?.let { "Apilable" to it }
+        )
+        if (inventoryRows.isNotEmpty()) {
+            DetailSection(title = "Inventario") {
+                inventoryRows.forEach { (l, v) -> StatRow(l, v) }
+            }
+        }
+
+        if (item.listCategories.isNotEmpty()) {
+            DetailSection(title = "Categorías") {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    item.listCategories.take(4).forEach { cat ->
+                        CategoryChip(text = cat)
+                    }
+                }
+            }
+        }
+
+        val priceRows = listOfNotNull(
+            item.buyRaw?.let { "Precio de compra" to it },
+            item.sellRaw?.let { "Precio de venta" to it }
+        )
+        if (priceRows.isNotEmpty()) {
+            DetailSection(title = "Economía") {
+                priceRows.forEach { (l, v) -> StatRow(l, v) }
+            }
+        }
+
+        val infoRows = listOfNotNull(
+            item.internalName?.let { "Nombre en el juego" to it },
+            item.wikiId?.let { "ID de item" to "#$it" }
+        )
+        if (infoRows.isNotEmpty()) {
+            DetailSection(title = "Información") {
+                infoRows.forEach { (l, v) -> InfoRow(l, v) }
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+private fun DetailHeader(item: Item) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            ItemThumbnail(item = item, size = 128.dp)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = item.name,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            RarityChip(rarity = item.rarity, large = true)
+            if (item.types.isNotEmpty()) {
+                ItemTypeChips(types = item.types)
+            }
+            if (item.hardmode) {
+                HardmodeBadge()
+            }
+        }
+    }
+}
+
+@Composable
+private fun HardmodeBadge() {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(Color(0xFFFF8A3D))
+            .padding(horizontal = 10.dp, vertical = 4.dp)
+    ) {
+        Text(
+            text = "Modo difícil",
+            style = MaterialTheme.typography.labelSmall,
+            color = Color.White,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+}
+
+@Composable
+private fun CategoryChip(text: String) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.20f))
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.45f),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(horizontal = 10.dp, vertical = 4.dp)
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
@@ -227,6 +322,30 @@ private fun StatRow(label: String, value: String?) {
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurface
+        )
+    }
+}
+
+@Composable
+private fun InfoRow(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 2.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontFamily = FontFamily.Monospace
         )
     }
 }

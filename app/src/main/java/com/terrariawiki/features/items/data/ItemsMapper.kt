@@ -4,21 +4,32 @@ import com.terrariawiki.features.items.domain.Item
 
 private const val LIST_DELIMITER = "^"
 
-fun ItemDto.toDomain(): Item = Item(
-    name = name,
-    types = type.split(LIST_DELIMITER).filter { it.isNotBlank() },
-    rarity = rare.toIntOrNull() ?: 0,
-    tooltip = tooltip?.takeIf { it.isNotBlank() }?.stripHtml(),
-    damage = damage?.toIntOrNull(),
-    defense = defense?.toIntOrNull(),
-    knockback = knockback?.toFloatOrNull(),
-    useTime = usetime?.toIntOrNull(),
-    sellRaw = extractSellValue(sell),
-    internalName = internalname?.takeIf { it.isNotBlank() },
-    wikiId = itemid?.toIntOrNull(),
-    imageFilename = imageFile?.takeIf { it.isNotBlank() }
-        ?: image?.extractFileName()
-)
+fun ItemDto.toDomain(): Item {
+    val types = type.split(LIST_DELIMITER).filter { it.isNotBlank() }
+    val categories = listCat?.split(LIST_DELIMITER)?.filter { it.isNotBlank() }.orEmpty()
+    return Item(
+        name = name,
+        types = types,
+        rarity = rare.toIntOrNull() ?: 0,
+        tooltip = tooltip?.takeIf { it.isNotBlank() }?.stripHtml(),
+        damage = damage?.toIntOrNull(),
+        defense = defense?.toIntOrNull(),
+        knockback = knockback?.toFloatOrNull(),
+        useTime = usetime?.toIntOrNull(),
+        critical = critical?.toIntOrNull(),
+        velocity = velocity?.toFloatOrNull(),
+        autoSwing = autoswing == "1",
+        sellRaw = extractSellValue(sell),
+        buyRaw = extractSellValue(buy),
+        internalName = internalname?.takeIf { it.isNotBlank() },
+        wikiId = itemid?.toIntOrNull(),
+        imageFilename = imageFile?.takeIf { it.isNotBlank() }
+            ?: image?.extractFileName(),
+        listCategories = categories,
+        stack = stack?.takeIf { it.isNotBlank() },
+        hardmode = hardmode == "1"
+    )
+}
 
 fun String.stripHtml(): String =
     replace(Regex("<[^>]+>"), "")
