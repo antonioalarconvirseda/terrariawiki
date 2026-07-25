@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.terrariawiki.features.items.domain.Item
+import com.terrariawiki.features.items.domain.Recipe
 import com.terrariawiki.features.items.ui.components.ErrorState
 import com.terrariawiki.features.items.ui.components.ItemThumbnail
 import com.terrariawiki.features.items.ui.components.ItemTypeChips
