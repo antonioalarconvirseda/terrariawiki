@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.terrariawiki.R
-import com.terrariawiki.core.network.TerrariaApiConfig
+import com.terrariawiki.core.network.buildItemImageUrl
 import com.terrariawiki.features.items.domain.Item
 
 @Composable
@@ -98,8 +98,7 @@ fun ItemThumbnail(
     modifier: Modifier = Modifier
 ) {
     val imageModel = item.imageFilename?.let { filename ->
-        val encoded = java.net.URLEncoder.encode(filename, "UTF-8").replace("+", "%20")
-        "${TerrariaApiConfig.HOST_IMAGE_BASE}/$encoded"
+        buildItemImageUrl(filename)
     }
     Box(
         modifier = modifier

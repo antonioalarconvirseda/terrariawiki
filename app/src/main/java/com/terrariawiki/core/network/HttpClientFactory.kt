@@ -17,10 +17,16 @@ object TerrariaApiConfig {
     const val HOST = "terraria.wiki.gg"
     const val BASE_PATH = "/api.php"
     const val HOST_IMAGE_BASE = "https://terraria.wiki.gg/wiki/Special:Redirect/file"
+    const val IMAGES_BASE = "https://terraria.wiki.gg/images"
     const val USER_AGENT =
         "TerrariaWikiApp/0.1.0 " +
             "(https://github.com/antonioalarconvirseda/terrariawiki; " +
             "antonioalarconvirseda@hotmail.com)"
+}
+
+fun buildItemImageUrl(filename: String): String {
+    val encoded = java.net.URLEncoder.encode(filename, "UTF-8").replace("+", "%20")
+    return "${TerrariaApiConfig.IMAGES_BASE}/$encoded"
 }
 
 private val terrariaJson = Json {
