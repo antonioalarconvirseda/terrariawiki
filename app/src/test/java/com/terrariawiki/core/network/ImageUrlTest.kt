@@ -13,14 +13,18 @@ class ImageUrlTest {
     }
 
     @Test
-    fun `encodes spaces as %20 not plus`() {
+    fun `replaces spaces with underscores (not %20) for CDN path`() {
         val url = buildItemImageUrl("Terra Blade.png")
         assertTrue(
-            "url should encode spaces as %20 but got: $url",
-            url.contains("%20")
+            "url should use underscores for spaces but got: $url",
+            url.contains("Terra_Blade.png")
         )
         assertTrue(
-            "url should NOT contain literal + for spaces but got: $url",
+            "url should NOT contain literal %20 but got: $url",
+            !url.contains("%20")
+        )
+        assertTrue(
+            "url should NOT contain + for spaces but got: $url",
             !url.contains("+")
         )
         assertTrue(
@@ -34,15 +38,32 @@ class ImageUrlTest {
     }
 
     @Test
-    fun `encodes apostrophes as %27 for items like Abigail`() {
+    fun `encodes apostrophes as percent 27 with underscores`() {
         val url = buildItemImageUrl("Abigail's Flower.png")
         assertTrue(
             "url should encode apostrophe as %27 but got: $url",
-            url.contains("%27")
+            url.contains("Abigail%27s_Flower.png")
         )
         assertTrue(
             "url should NOT contain literal ' but got: $url",
             !url.contains("'")
+        )
+    }
+
+    @Test
+    fun `keeps parentheses literal (not percent 28 or 29)`() {
+        val url = buildItemImageUrl("Music Box (Title).png")
+        assertTrue(
+            "url should keep parentheses literal but got: $url",
+            url.contains("Music_Box_(Title).png")
+        )
+        assertTrue(
+            "url should NOT contain %28 but got: $url",
+            !url.contains("%28")
+        )
+        assertTrue(
+            "url should NOT contain %29 but got: $url",
+            !url.contains("%29")
         )
     }
 }

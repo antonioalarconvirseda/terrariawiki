@@ -25,7 +25,10 @@ object TerrariaApiConfig {
 }
 
 fun buildItemImageUrl(filename: String): String {
-    val encoded = java.net.URLEncoder.encode(filename, "UTF-8").replace("+", "%20")
+    val underscored = filename.replace(' ', '_')
+    val encoded = java.net.URLEncoder.encode(underscored, "UTF-8")
+        .replace("%28", "(")
+        .replace("%29", ")")
     return "${TerrariaApiConfig.IMAGES_BASE}/$encoded"
 }
 
