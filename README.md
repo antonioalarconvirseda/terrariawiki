@@ -96,4 +96,7 @@ APK generado: `app/build/outputs/apk/debug/app-debug.apk`
 
 ## Documentación del proyecto
 
-Las notas de arquitectura, decisiones y patrones están en una bóveda de Obsidian paralela (`obsidian-kmp/Kotlin Multiplatform/TerrariaWiki/`). El [[00-Index]] contiene el mapa completo.
+Las notas de arquitectura, decisiones y patrones están en una bóveda de Obsidian pública:
+**[obsidian-kmp](https://github.com/antonioalarconvirseda/obsidian-kmp)** → carpeta `Kotlin Multiplatform/TerrariaWiki/`.
+
+El [`00-Index.md`](https://github.com/antonioalarconvirseda/obsidian-kmp/blob/main/Kotlin%20Multiplatform/TerrariaWiki/00-Index.md) contiene el mapa completo.
