@@ -33,8 +33,14 @@ class ItemDetailViewModel(
             _uiState.value = UiState.Loading
             getItemByName(name).fold(
                 onSuccess = { item ->
-                    if (item != null) _uiState.value = UiState.Ready(item)
-                    else _uiState.value = UiState.Error("No se encontró «$name»")
+                    if (item != null) {
+                        _uiState.value = UiState.Ready(item)
+                        repository.getRecipes(item.name).onSuccess { recipes ->
+                            _recipes.value = recipes
+                        }
+                    } else {
+                        _uiState.value = UiState.Error("No se encontró «$name»")
+                    }
                 },
                 onFailure = { error ->
                     _uiState.value = UiState.Error(
@@ -42,13 +48,6 @@ class ItemDetailViewModel(
                     )
                 }
             )
-            getItemByName(name).onSuccess { item ->
-                if (item != null) {
-                    repository.getRecipes(item.name).onSuccess { recipes ->
-                        _recipes.value = recipes
-                    }
-                }
-            }
         }
     }
 }

@@ -66,10 +66,10 @@ class RecipesMapperTest {
     }
 
     @Test
-    fun `falls back to amount 1 when amount field is zero or empty`() {
+    fun `falls back to amount 1 when amount field is empty or non-numeric`() {
         val dto1 = RecipeDto(
             result = "X",
-            amount = "0",
+            amount = "",
             station = "Bench",
             ings = "${wrap}Wood${wrap}"
         )
@@ -77,7 +77,7 @@ class RecipesMapperTest {
 
         val dto2 = RecipeDto(
             result = "Y",
-            amount = "",
+            amount = "abc",
             station = "Bench",
             ings = "${wrap}Wood${wrap}"
         )
