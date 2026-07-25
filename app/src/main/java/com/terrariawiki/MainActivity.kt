@@ -17,6 +17,7 @@ import com.terrariawiki.features.items.domain.ItemCategory
 import com.terrariawiki.features.items.ui.HomeScreen
 import com.terrariawiki.features.items.ui.ItemDetailScreen
 import com.terrariawiki.features.items.ui.ItemsByCategoryScreen
+import com.terrariawiki.features.items.ui.SearchScreen
 import org.koin.androidx.compose.KoinAndroidContext
 
 class MainActivity : ComponentActivity() {
@@ -46,7 +47,17 @@ private fun TerrariaWikiNavHost() {
             HomeScreen(
                 onCategoryClick = { category ->
                     navController.navigate("category/${category.ordinal}")
-                }
+                },
+                onSearchClick = { navController.navigate("search") }
+            )
+        }
+        composable("search") {
+            SearchScreen(
+                onResultClick = { title ->
+                    navController.navigate("item/${java.net.URLEncoder.encode(title, "UTF-8")}")
+                },
+                onItemNotFound = { _ -> },
+                onBack = { navController.popBackStack() }
             )
         }
         composable(

@@ -34,6 +34,7 @@ class ItemsApiImpl(
             parameter("list", "search")
             parameter("srsearch", query)
             parameter("srlimit", limit)
+            parameter("srnamespace", 0)
             parameter("format", "json")
         }.body()
 

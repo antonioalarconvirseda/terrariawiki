@@ -3,6 +3,7 @@ package com.terrariawiki.features.items.data
 import com.terrariawiki.features.items.domain.Item
 import com.terrariawiki.features.items.domain.ItemCategory
 import com.terrariawiki.features.items.domain.Recipe
+import com.terrariawiki.features.items.domain.SearchResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +26,8 @@ interface ItemsRepository {
     fun hasMoreFor(category: ItemCategory): StateFlow<Boolean>
 
     suspend fun getRecipes(name: String): Result<List<Recipe>>
+
+    suspend fun searchAll(query: String, limit: Int = 25): Result<List<SearchResult>>
 }
 
 class ItemsRepositoryImpl(
@@ -120,5 +123,10 @@ class ItemsRepositoryImpl(
     override suspend fun getRecipes(name: String): Result<List<Recipe>> = runCatching {
         val response = api.getRecipesForItem(name)
         response.cargoquery.map { it.title.toDomain() }
+    }
+
+    override suspend fun searchAll(query: String, limit: Int): Result<List<SearchResult>> = runCatching {
+        val response = api.searchItems(query, limit)
+        response.query.search.map { it.toDomain() }
     }
 }

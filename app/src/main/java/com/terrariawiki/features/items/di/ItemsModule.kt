@@ -9,6 +9,7 @@ import com.terrariawiki.features.items.domain.SearchItemsUseCase
 import com.terrariawiki.features.items.ui.CategoryViewModel
 import com.terrariawiki.features.items.ui.ItemDetailViewModel
 import com.terrariawiki.features.items.ui.ItemsViewModel
+import com.terrariawiki.features.items.ui.SearchViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -22,4 +23,5 @@ val itemsModule = module {
     viewModel { ItemsViewModel(get(), get()) }
     viewModel { ItemDetailViewModel(get(), get()) }
     viewModel { params -> CategoryViewModel(params.get<ItemCategory>(), get()) }
+    viewModel { SearchViewModel(get()) }
 }

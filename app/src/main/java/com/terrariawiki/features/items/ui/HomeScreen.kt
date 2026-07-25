@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.Chair
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.LocalDrink
 import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.SquareFoot
@@ -47,6 +48,7 @@ import com.terrariawiki.features.items.domain.ItemCategory
 @Composable
 fun HomeScreen(
     onCategoryClick: (ItemCategory) -> Unit,
+    onSearchClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -58,6 +60,15 @@ fun HomeScreen(
                         text = "Terraria Wiki",
                         style = MaterialTheme.typography.titleLarge
                     )
+                },
+                actions = {
+                    IconButton(onClick = onSearchClick) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "Buscar",
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
