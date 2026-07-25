@@ -54,5 +54,10 @@ data class ItemDto(
     val placeable: String? = null,
     val stack: String? = null,
     val hardmode: String? = null,
-    @SerialName("image") val image: String? = null
+    @SerialName("image") val image: String? = null,
+    @SerialName("imagefile") val imageFile: String? = null,
+    val critical: String? = null,
+    val velocity: String? = null,
+    val autoswing: String? = null,
+    val buy: String? = null
 )

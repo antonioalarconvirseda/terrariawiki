@@ -45,6 +45,7 @@ class ItemsApiImpl(
     companion object {
         const val DEFAULT_FIELDS =
             "name,type,rare,sell,damage,defense,knockback,usetime,tooltip," +
-                "internalname,itemid,listcat,tag,placeable,stack,hardmode,image"
+                "internalname,itemid,listcat,tag,placeable,stack,hardmode,image," +
+                "imagefile,critical,velocity,autoswing,buy"
     }
 }

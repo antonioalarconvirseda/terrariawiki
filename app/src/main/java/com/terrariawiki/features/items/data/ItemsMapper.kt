@@ -16,7 +16,8 @@ fun ItemDto.toDomain(): Item = Item(
     sellRaw = extractSellValue(sell),
     internalName = internalname?.takeIf { it.isNotBlank() },
     wikiId = itemid?.toIntOrNull(),
-    imageFilename = image?.extractFileName()
+    imageFilename = imageFile?.takeIf { it.isNotBlank() }
+        ?: image?.extractFileName()
 )
 
 fun String.stripHtml(): String =

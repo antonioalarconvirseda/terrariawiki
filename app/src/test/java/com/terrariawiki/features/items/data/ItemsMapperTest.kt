@@ -126,4 +126,26 @@ class ItemsMapperTest {
         assertNull(dto1.toDomain().sellRaw)
         assertNull(dto2.toDomain().sellRaw)
     }
+
+    @Test
+    fun `prefers imagefile over image wikitext when both are present`() {
+        val dto = ItemDto(
+            name = "Terra Blade",
+            imagefile = "Terra Blade.png",
+            image = "[[File:Obsolete.png|caption]]"
+        )
+        val item = dto.toDomain()
+        assertEquals("Terra Blade.png", item.imageFilename)
+    }
+
+    @Test
+    fun `falls back to image wikitext when imagefile is blank`() {
+        val dto = ItemDto(
+            name = "X",
+            imagefile = "",
+            image = "[[File:FromWikitext.png|caption]]"
+        )
+        val item = dto.toDomain()
+        assertEquals("FromWikitext.png", item.imageFilename)
+    }
 }

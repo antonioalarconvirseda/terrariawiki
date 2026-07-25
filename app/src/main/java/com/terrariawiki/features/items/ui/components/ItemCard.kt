@@ -98,7 +98,7 @@ fun ItemThumbnail(
     modifier: Modifier = Modifier
 ) {
     val imageModel = item.imageFilename?.let { filename ->
-        "${TerrariaApiConfig.HOST_IMAGE_BASE}/$filename"
+        "${TerrariaApiConfig.HOST_IMAGE_BASE}/${android.net.Uri.encode(filename)}"
     }
     Box(
         modifier = modifier
