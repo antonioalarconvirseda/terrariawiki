@@ -58,6 +58,16 @@ class ItemsApiImpl(
         parameter("format", "json")
     }.body()
 
+    override suspend fun getRecipesForItem(name: String): CargoResponse<RecipeDto> =
+        client.get(TerrariaApiConfig.BASE_PATH) {
+            parameter("action", "cargoquery")
+            parameter("tables", "Recipes")
+            parameter("fields", "result,amount,station,ings")
+            parameter("where", "result='${name.replace("'", "''")}'")
+            parameter("limit", 50)
+            parameter("format", "json")
+        }.body()
+
     companion object {
         const val DEFAULT_FIELDS =
             "name,type,rare,sell,damage,defense,knockback,usetime,tooltip," +

@@ -21,4 +21,6 @@ interface ItemsApi {
         limit: Int = 50,
         offset: Int = 0
     ): CargoResponse<ItemDto>
+
+    suspend fun getRecipesForItem(name: String): CargoResponse<RecipeDto>
 }
