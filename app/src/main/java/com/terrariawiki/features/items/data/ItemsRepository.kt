@@ -1,9 +1,12 @@
 package com.terrariawiki.features.items.data
 
 import com.terrariawiki.features.items.domain.Item
+import com.terrariawiki.features.items.domain.ItemCategory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -13,6 +16,11 @@ interface ItemsRepository {
     suspend fun refresh(): Result<Unit>
     suspend fun search(query: String): Result<List<Item>>
     suspend fun getByName(name: String): Result<Item?>
+
+    fun observeByCategory(category: ItemCategory): Flow<List<Item>>
+    suspend fun refreshByCategory(category: ItemCategory): Result<Unit>
+    suspend fun loadMoreByCategory(category: ItemCategory): Result<List<Item>>
+    fun hasMoreFor(category: ItemCategory): StateFlow<Boolean>
 }
 
 class ItemsRepositoryImpl(
@@ -21,6 +29,9 @@ class ItemsRepositoryImpl(
 
     private val _items = MutableStateFlow<List<Item>>(emptyList())
     private val cacheMutex = Mutex()
+
+    private val byCategoryFlows: MutableMap<ItemCategory, MutableStateFlow<List<Item>>> = mutableMapOf()
+    private val hasMoreMap: MutableMap<ItemCategory, MutableStateFlow<Boolean>> = mutableMapOf()
 
     override fun observeItems(): Flow<List<Item>> = _items.asStateFlow()
 
@@ -55,4 +66,31 @@ class ItemsRepositoryImpl(
             response.cargoquery.firstOrNull()?.title?.toDomain()
         }
     }
+
+    override fun observeByCategory(category: ItemCategory): Flow<List<Item>> =
+        flowFor(category).asStateFlow()
+
+    override suspend fun refreshByCategory(category: ItemCategory): Result<Unit> = runCatching {
+        val response = api.queryByCategory(category = category, limit = 50, offset = 0)
+        val items = response.cargoquery.map { it.title.toDomain() }
+        flowFor(category).value = items
+        hasMoreFor(category).value = items.size >= 50
+    }
+
+    override suspend fun loadMoreByCategory(category: ItemCategory): Result<List<Item>> =
+        runCatching {
+            val current = flowFor(category).value
+            val offset = current.size
+            val response = api.queryByCategory(category = category, limit = 50, offset = offset)
+            val moreItems = response.cargoquery.map { it.title.toDomain() }
+            flowFor(category).value = current + moreItems
+            hasMoreFor(category).value = moreItems.size >= 50
+            moreItems
+        }
+
+    override fun hasMoreFor(category: ItemCategory): StateFlow<Boolean> =
+        hasMoreMap.getOrPut(category) { MutableStateFlow(true) }
+
+    private fun flowFor(category: ItemCategory): MutableStateFlow<List<Item>> =
+        byCategoryFlows.getOrPut(category) { MutableStateFlow(emptyList()) }
 }

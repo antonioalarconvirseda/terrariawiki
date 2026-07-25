@@ -1,6 +1,7 @@
 package com.terrariawiki.features.items.data
 
 import com.terrariawiki.core.network.TerrariaApiConfig
+import com.terrariawiki.features.items.domain.ItemCategory
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -41,6 +42,21 @@ class ItemsApiImpl(
         where = "name='${name.replace("'", "''")}'",
         limit = 1
     )
+
+    override suspend fun queryByCategory(
+        category: ItemCategory,
+        fields: String,
+        limit: Int,
+        offset: Int
+    ): CargoResponse<ItemDto> = client.get(TerrariaApiConfig.BASE_PATH) {
+        parameter("action", "cargoquery")
+        parameter("tables", "Items")
+        parameter("fields", fields)
+        parameter("where", "type HOLDS '${category.apiFilter}'")
+        parameter("limit", limit)
+        parameter("offset", offset)
+        parameter("format", "json")
+    }.body()
 
     companion object {
         const val DEFAULT_FIELDS =

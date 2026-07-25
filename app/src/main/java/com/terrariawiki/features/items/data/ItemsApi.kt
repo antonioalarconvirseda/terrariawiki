@@ -1,5 +1,7 @@
 package com.terrariawiki.features.items.data
 
+import com.terrariawiki.features.items.domain.ItemCategory
+
 interface ItemsApi {
     suspend fun queryItems(
         fields: String,
@@ -12,4 +14,11 @@ interface ItemsApi {
     suspend fun searchItems(query: String, limit: Int = 25): SearchResponse
 
     suspend fun getByName(name: String): CargoResponse<ItemDto>
+
+    suspend fun queryByCategory(
+        category: ItemCategory,
+        fields: String = ItemsApiImpl.DEFAULT_FIELDS,
+        limit: Int = 50,
+        offset: Int = 0
+    ): CargoResponse<ItemDto>
 }
