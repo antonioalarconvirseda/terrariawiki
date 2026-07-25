@@ -21,12 +21,21 @@ fun RarityChip(
     large: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    val color = rarityColor(rarity)
+    val backgroundColor = when (rarity) {
+        -1 -> Color(0xFF1A1A1A)
+        0 -> Color(0xFFE5E5E5)
+        else -> rarityColor(rarity)
+    }
+    val textColor = when (rarity) {
+        -1 -> Color.White
+        0 -> Color(0xFF333333)
+        else -> Color.White
+    }
     val shape = RoundedCornerShape(if (large) 12.dp else 8.dp)
     Box(
         modifier = modifier
             .clip(shape)
-            .background(color)
+            .background(backgroundColor)
             .border(
                 width = 1.dp,
                 color = Color.Black.copy(alpha = 0.15f),
@@ -41,7 +50,7 @@ fun RarityChip(
             text = rarityLabel(rarity),
             style = if (large) MaterialTheme.typography.labelLarge
             else MaterialTheme.typography.labelSmall,
-            color = Color.White,
+            color = textColor,
             fontWeight = FontWeight.SemiBold
         )
     }
