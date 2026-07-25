@@ -109,7 +109,7 @@ fun ItemThumbnail(
     ) {
         if (imageModel != null) {
             AsyncImage(
-                model = "https://$imageModel",
+                model = imageModel,
                 contentDescription = item.name,
                 modifier = Modifier.size(size),
                 placeholder = androidx.compose.ui.res.painterResource(R.drawable.ic_item_placeholder),
