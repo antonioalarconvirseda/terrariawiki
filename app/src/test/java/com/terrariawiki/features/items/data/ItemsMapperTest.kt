@@ -121,13 +121,15 @@ class ItemsMapperTest {
 
     @Test
     fun `sellRaw parses title attribute for all four coin types`() {
-        val cases = listOf(
-            """<span class="coin" title="60 Copper Coins" data-sort-value="60">..."" to "60 CC",
-            """<span class="coin" title="2 Silver Coins" data-sort-value="200">..."" to "2 SC",
-            """<span class="coin" title="20 Gold Coins" data-sort-value="200000">..."" to "20 GC",
-            """<span class="coin" title="5 Platinum Coins" data-sort-value="5000000">..."" to "5 PC",
+        val cases: List<Pair<String, String>> = listOf(
+            """<span class="coin" title="60 Copper Coins" data-sort-value="60">...""" to "60 CC",
+            """<span class="coin" title="2 Silver Coins" data-sort-value="200">...""" to "2 SC",
+            """<span class="coin" title="20 Gold Coins" data-sort-value="200000">...""" to "20 GC",
+            """<span class="coin" title="5 Platinum Coins" data-sort-value="5000000">...""" to "5 PC"
         )
-        for ((raw, expected) in cases) {
+        for (case in cases) {
+            val raw = case.first
+            val expected = case.second
             val dto = ItemDto(name = "X", sell = raw)
             assertEquals("Failed for input: $raw", expected, dto.toDomain().sellRaw)
         }
@@ -145,7 +147,7 @@ class ItemsMapperTest {
     fun `prefers imagefile over image wikitext when both are present`() {
         val dto = ItemDto(
             name = "Terra Blade",
-            imagefile = "Terra Blade.png",
+            imageFile = "Terra Blade.png",
             image = "[[File:Obsolete.png|caption]]"
         )
         val item = dto.toDomain()
@@ -156,7 +158,7 @@ class ItemsMapperTest {
     fun `falls back to image wikitext when imagefile is blank`() {
         val dto = ItemDto(
             name = "X",
-            imagefile = "",
+            imageFile = "",
             image = "[[File:FromWikitext.png|caption]]"
         )
         val item = dto.toDomain()

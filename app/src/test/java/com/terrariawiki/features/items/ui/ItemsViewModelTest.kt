@@ -32,9 +32,45 @@ class ItemsViewModelTest {
     private lateinit var getByName: GetItemByNameUseCase
 
     private val sampleItems = listOf(
-        Item("Wood", listOf("block", "material"), 0, null, null, null, null, null, null, "Wood", 2702, "Wood.png"),
-        Item("Stone Block", listOf("block"), 0, null, null, null, null, null, null, "StoneBlock", 2703, null),
-        Item("Terra Blade", listOf("weapon", "melee"), 5, "Legendaria", 190, null, 6.5f, 16, null, "TerraBlade", 2704, null)
+        Item(
+            name = "Wood",
+            types = listOf("block", "material"),
+            rarity = 0,
+            tooltip = null,
+            damage = null, defense = null, knockback = null, useTime = null,
+            critical = null, velocity = null, autoSwing = false,
+            sellRaw = null, buyRaw = null,
+            internalName = "Wood", wikiId = 2702,
+            imageFilename = "Wood.png",
+            listCategories = emptyList(),
+            stack = null, hardmode = false
+        ),
+        Item(
+            name = "Stone Block",
+            types = listOf("block"),
+            rarity = 0,
+            tooltip = null,
+            damage = null, defense = null, knockback = null, useTime = null,
+            critical = null, velocity = null, autoSwing = false,
+            sellRaw = null, buyRaw = null,
+            internalName = "StoneBlock", wikiId = 2703,
+            imageFilename = null,
+            listCategories = emptyList(),
+            stack = null, hardmode = false
+        ),
+        Item(
+            name = "Terra Blade",
+            types = listOf("weapon", "melee"),
+            rarity = 5,
+            tooltip = "Legendaria",
+            damage = 190, defense = null, knockback = 6.5f, useTime = 16,
+            critical = 4, velocity = 12f, autoSwing = true,
+            sellRaw = "20 GC", buyRaw = null,
+            internalName = "TerraBlade", wikiId = 2704,
+            imageFilename = "Terra Blade.png",
+            listCategories = listOf("broadswords", "Melee weapons"),
+            stack = "1", hardmode = true
+        )
     )
 
     @Before
