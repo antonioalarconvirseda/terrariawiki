@@ -45,7 +45,7 @@ class CategoryViewModel(
             _uiState.value = UiState.Loading
             repository.refreshByCategory(category).fold(
                 onSuccess = {
-                    val current = items.first()
+                    val current = repository.observeByCategoryDirect(category).value
                     _uiState.value = if (current.isEmpty()) UiState.Empty
                     else UiState.Ready(current)
                 },
@@ -64,7 +64,7 @@ class CategoryViewModel(
             _isLoadingMore.value = true
             repository.loadMoreByCategory(category).fold(
                 onSuccess = {
-                    val current = items.first()
+                    val current = repository.observeByCategoryDirect(category).value
                     _uiState.value = if (current.isEmpty()) UiState.Empty
                     else UiState.Ready(current)
                     _isLoadingMore.value = false

@@ -18,6 +18,7 @@ interface ItemsRepository {
     suspend fun getByName(name: String): Result<Item?>
 
     fun observeByCategory(category: ItemCategory): Flow<List<Item>>
+    fun observeByCategoryDirect(category: ItemCategory): StateFlow<List<Item>>
     suspend fun refreshByCategory(category: ItemCategory): Result<Unit>
     suspend fun loadMoreByCategory(category: ItemCategory): Result<List<Item>>
     fun hasMoreFor(category: ItemCategory): StateFlow<Boolean>
@@ -32,6 +33,7 @@ class ItemsRepositoryImpl(
 
     private val byCategoryFlows: MutableMap<ItemCategory, MutableStateFlow<List<Item>>> = mutableMapOf()
     private val hasMoreMap: MutableMap<ItemCategory, MutableStateFlow<Boolean>> = mutableMapOf()
+    private val flowMutex = Mutex()
 
     override fun observeItems(): Flow<List<Item>> = _items.asStateFlow()
 
@@ -70,27 +72,45 @@ class ItemsRepositoryImpl(
     override fun observeByCategory(category: ItemCategory): Flow<List<Item>> =
         flowFor(category).asStateFlow()
 
+    override fun observeByCategoryDirect(category: ItemCategory): StateFlow<List<Item>> =
+        flowFor(category).asStateFlow()
+
     override suspend fun refreshByCategory(category: ItemCategory): Result<Unit> = runCatching {
         val response = api.queryByCategory(category = category, limit = 50, offset = 0)
         val items = response.cargoquery.map { it.title.toDomain() }
-        flowFor(category).value = items
-        hasMoreFor(category).value = items.size >= 50
+        val flow = flowFor(category)
+        flow.value = items
+        hasMoreFlowFor(category).value = items.size >= 50
     }
 
     override suspend fun loadMoreByCategory(category: ItemCategory): Result<List<Item>> =
         runCatching {
-            val current = flowFor(category).value
+            val flow = flowFor(category)
+            val current = flow.value
             val offset = current.size
             val response = api.queryByCategory(category = category, limit = 50, offset = offset)
             val moreItems = response.cargoquery.map { it.title.toDomain() }
-            flowFor(category).value = current + moreItems
-            hasMoreFor(category).value = moreItems.size >= 50
+            flow.value = current + moreItems
+            hasMoreFlowFor(category).value = moreItems.size >= 50
             moreItems
         }
 
     override fun hasMoreFor(category: ItemCategory): StateFlow<Boolean> =
-        hasMoreMap.getOrPut(category) { MutableStateFlow(true) }
+        hasMoreFlowFor(category).asStateFlow()
 
-    private fun flowFor(category: ItemCategory): MutableStateFlow<List<Item>> =
-        byCategoryFlows.getOrPut(category) { MutableStateFlow(emptyList()) }
+    private fun hasMoreFlowFor(category: ItemCategory): MutableStateFlow<Boolean> {
+        val existing = hasMoreMap[category]
+        if (existing != null) return existing
+        val new = MutableStateFlow(true)
+        hasMoreMap[category] = new
+        return new
+    }
+
+    private fun flowFor(category: ItemCategory): MutableStateFlow<List<Item>> {
+        val existing = byCategoryFlows[category]
+        if (existing != null) return existing
+        val new = MutableStateFlow(emptyList<Item>())
+        byCategoryFlows[category] = new
+        return new
+    }
 }
