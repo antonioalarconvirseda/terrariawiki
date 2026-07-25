@@ -28,24 +28,24 @@ fun String.stripHtml(): String =
         .replace("&#39;", "'")
         .trim()
 
-private val SELL_NUMERIC = Regex("data-sort-value=\"(\\d+)\"")
+private val SELL_TITLE = Regex("""title="(\d+)\s+(\w+)\s+Coins"""")
+
+private val COIN_ABBR = mapOf(
+    "Copper" to "CC",
+    "Silver" to "SC",
+    "Gold" to "GC",
+    "Platinum" to "PC"
+)
 
 fun extractSellValue(raw: String?): String? {
     if (raw.isNullOrBlank()) return null
-    val match = SELL_NUMERIC.find(raw)
-    val numeric = match?.groupValues?.getOrNull(1)
-    return when {
-        numeric == null -> raw.stripHtml()
-        else -> "$numeric ${inferCoin(raw)}"
+    val match = SELL_TITLE.find(raw)
+    if (match != null) {
+        val qty = match.groupValues[1]
+        val coin = COIN_ABBR[match.groupValues[2]] ?: "CC"
+        return "$qty $coin"
     }
-}
-
-private fun inferCoin(raw: String): String = when {
-    "Platinum" in raw || " PC" in raw -> "PC"
-    "Gold" in raw || " GC" in raw -> "GC"
-    "Silver" in raw || " SC" in raw -> "SC"
-    "Copper" in raw || " CC" in raw -> "CC"
-    else -> "CC"
+    return raw.stripHtml().takeIf { it.isNotBlank() }
 }
 
 private val FILE_REF = Regex("""\[\[File:([^\]|]+)""")

@@ -120,6 +120,20 @@ class ItemsMapperTest {
     }
 
     @Test
+    fun `sellRaw parses title attribute for all four coin types`() {
+        val cases = listOf(
+            """<span class="coin" title="60 Copper Coins" data-sort-value="60">..."" to "60 CC",
+            """<span class="coin" title="2 Silver Coins" data-sort-value="200">..."" to "2 SC",
+            """<span class="coin" title="20 Gold Coins" data-sort-value="200000">..."" to "20 GC",
+            """<span class="coin" title="5 Platinum Coins" data-sort-value="5000000">..."" to "5 PC",
+        )
+        for ((raw, expected) in cases) {
+            val dto = ItemDto(name = "X", sell = raw)
+            assertEquals("Failed for input: $raw", expected, dto.toDomain().sellRaw)
+        }
+    }
+
+    @Test
     fun `sellRaw is null when sell is blank or null`() {
         val dto1 = ItemDto(name = "X", sell = "")
         val dto2 = ItemDto(name = "Y", sell = null)
