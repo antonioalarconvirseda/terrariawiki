@@ -20,6 +20,6 @@ val itemsModule = module {
     factory { GetItemByNameUseCase(get()) }
 
     viewModel { ItemsViewModel(get(), get()) }
-    viewModel { ItemDetailViewModel(get()) }
+    viewModel { ItemDetailViewModel(get(), get()) }
     viewModel { params -> CategoryViewModel(params.get<ItemCategory>(), get()) }
 }

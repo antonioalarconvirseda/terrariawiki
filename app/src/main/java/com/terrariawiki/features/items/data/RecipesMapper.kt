@@ -1,5 +1,6 @@
 package com.terrariawiki.features.items.data
 
+import com.terrariawiki.features.items.domain.Ingredient
 import com.terrariawiki.features.items.domain.Recipe
 
 private const val RECIPES_LIST_DELIMITER = "^"
@@ -13,7 +14,7 @@ fun RecipeDto.toDomain(): Recipe {
             val parts = entry.split(FIELD_WRAP)
             val name = parts.getOrNull(1).orEmpty()
             val qty = parts.getOrNull(2)?.toIntOrNull() ?: 1
-            name to qty
+            Ingredient(name = name, quantity = qty)
         }
     return Recipe(
         result = result,

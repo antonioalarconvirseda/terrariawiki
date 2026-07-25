@@ -7,8 +7,8 @@ import org.junit.Test
 
 class RecipesMapperTest {
 
-    private const val WRAP = "\u00a6"
-    private const val LIST = "^"
+    private val wrap = "\u00a6"
+    private val listDelim = "^"
 
     @Test
     fun `parses single ingredient recipe`() {
@@ -16,7 +16,7 @@ class RecipesMapperTest {
             result = "Wooden Sword",
             amount = "1",
             station = "Work Bench",
-            ings = "${WRAP}Wood${WRAP}"
+            ings = "${wrap}Wood${wrap}"
         )
         val recipe = dto.toDomain()
         assertEquals("Wooden Sword", recipe.result)
@@ -32,7 +32,7 @@ class RecipesMapperTest {
             result = "Statue",
             amount = "1",
             station = "Heavy Assembler",
-            ings = "${WRAP}Stone Block${WRAP}50"
+            ings = "${wrap}Stone Block${wrap}50"
         )
         val recipe = dto.toDomain()
         assertEquals(Ingredient("Stone Block", 50), recipe.ingredients.first())
@@ -44,7 +44,7 @@ class RecipesMapperTest {
             result = "True Excalibur",
             amount = "1",
             station = "Mythril Anvil",
-            ings = "${WRAP}Broken Hero Sword${WRAP}1${LIST}${WRAP}Excalibur${WRAP}1"
+            ings = "${wrap}Broken Hero Sword${wrap}1${listDelim}${wrap}Excalibur${wrap}1"
         )
         val recipe = dto.toDomain()
         assertEquals(2, recipe.ingredients.size)
@@ -58,7 +58,7 @@ class RecipesMapperTest {
             result = "Mythril Anvil",
             amount = "1",
             station = "Iron Anvil",
-            ings = "${WRAP}Mythril Bar${WRAP}10${LIST}${WRAP}Iron Anvil${WRAP}1"
+            ings = "${wrap}Mythril Bar${wrap}10${listDelim}${wrap}Iron Anvil${wrap}1"
         )
         val recipe = dto.toDomain()
         assertEquals(Ingredient("Mythril Bar", 10), recipe.ingredients[0])
@@ -71,7 +71,7 @@ class RecipesMapperTest {
             result = "X",
             amount = "0",
             station = "Bench",
-            ings = "${WRAP}Wood${WRAP}"
+            ings = "${wrap}Wood${wrap}"
         )
         assertEquals(1, dto1.toDomain().amount)
 
@@ -79,7 +79,7 @@ class RecipesMapperTest {
             result = "Y",
             amount = "",
             station = "Bench",
-            ings = "${WRAP}Wood${WRAP}"
+            ings = "${wrap}Wood${wrap}"
         )
         assertEquals(1, dto2.toDomain().amount)
     }
@@ -97,7 +97,7 @@ class RecipesMapperTest {
             result = "Terra Blade",
             amount = "1",
             station = "Mythril Anvil",
-            ings = "${WRAP}True Night's Edge${WRAP}1${LIST}${WRAP}True Excalibur${WRAP}1${LIST}${WRAP}Broken Hero Sword${WRAP}1"
+            ings = "${wrap}True Night's Edge${wrap}1${listDelim}${wrap}True Excalibur${wrap}1${listDelim}${wrap}Broken Hero Sword${wrap}1"
         )
         val recipe = dto.toDomain()
         assertEquals(3, recipe.ingredients.size)
