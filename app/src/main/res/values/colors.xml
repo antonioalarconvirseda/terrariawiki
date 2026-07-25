@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="sky_teal">#4A93B0</color>
+    <color name="jungle_green">#3B7C36</color>
+    <color name="gold_gem">#F2C94C</color>
+    <color name="slime_red">#E94B4B</color>
+    <color name="hell_orange">#FF8A3D</color>
+    <color name="cave_dark">#1E1E2A</color>
+    <color name="cloud_white">#F4F1E6</color>
+    <color name="stone_gray">#6B7280</color>
+</resources>
