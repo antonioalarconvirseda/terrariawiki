@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -70,12 +71,9 @@ class ItemsViewModel(
             _uiState.value = UiState.Loading
             getItems.refresh().fold(
                 onSuccess = {
-                    val current = getItems()
-                    current.collect { items ->
-                        _uiState.value = if (items.isEmpty()) UiState.Empty
-                        else UiState.Ready(items)
-                        return@collect
-                    }
+                    val items = getItems().first()
+                    _uiState.value = if (items.isEmpty()) UiState.Empty
+                    else UiState.Ready(items)
                 },
                 onFailure = { error ->
                     _uiState.value = UiState.Error(
