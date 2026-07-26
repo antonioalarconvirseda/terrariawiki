@@ -1,7 +1,7 @@
 package com.terrariawiki.features.items.ui
 
 import app.cash.turbine.test
-import com.terrariawiki.features.items.data.ItemsRepository
+import com.terrariawiki.features.items.domain.ItemsRepository
 import com.terrariawiki.features.items.domain.SearchResult
 import io.mockk.coEvery
 import io.mockk.mockk

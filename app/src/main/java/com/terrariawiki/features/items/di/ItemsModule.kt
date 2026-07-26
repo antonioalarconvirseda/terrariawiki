@@ -1,10 +1,10 @@
 package com.terrariawiki.features.items.di
 
-import com.terrariawiki.features.items.data.ItemsRepository
 import com.terrariawiki.features.items.data.ItemsRepositoryImpl
 import com.terrariawiki.features.items.domain.GetItemByNameUseCase
 import com.terrariawiki.features.items.domain.GetItemsUseCase
 import com.terrariawiki.features.items.domain.ItemCategory
+import com.terrariawiki.features.items.domain.ItemsRepository
 import com.terrariawiki.features.items.domain.SearchItemsUseCase
 import com.terrariawiki.features.items.ui.CategoryViewModel
 import com.terrariawiki.features.items.ui.ItemDetailViewModel

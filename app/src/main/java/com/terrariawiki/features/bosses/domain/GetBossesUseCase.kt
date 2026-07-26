@@ -1,6 +1,5 @@
 package com.terrariawiki.features.bosses.domain
 
-import com.terrariawiki.features.bosses.data.BossesRepository
 import kotlinx.coroutines.flow.StateFlow
 
 class GetBossesUseCase(

@@ -1,6 +1,6 @@
 package com.terrariawiki.features.bosses.ui
 
-import com.terrariawiki.features.bosses.data.BossesRepository
+import com.terrariawiki.features.bosses.domain.BossesRepository
 import com.terrariawiki.features.bosses.domain.Boss
 import io.mockk.coEvery
 import io.mockk.every

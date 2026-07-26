@@ -1,6 +1,6 @@
 package com.terrariawiki.features.items.ui
 
-import com.terrariawiki.features.items.data.ItemsRepository
+import com.terrariawiki.features.items.domain.ItemsRepository
 import com.terrariawiki.features.items.domain.Item
 import com.terrariawiki.features.items.domain.ItemCategory
 import io.mockk.coEvery

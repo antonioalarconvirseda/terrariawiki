@@ -1,17 +1,12 @@
 package com.terrariawiki.features.bosses.data
 
 import com.terrariawiki.features.bosses.domain.Boss
+import com.terrariawiki.features.bosses.domain.BossesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-
-interface BossesRepository {
-    fun observeBosses(): StateFlow<List<Boss>>
-    suspend fun refresh(): Result<Unit>
-    suspend fun getByName(name: String): Result<Boss?>
-}
 
 class BossesRepositoryImpl(
     private val api: BossesApi

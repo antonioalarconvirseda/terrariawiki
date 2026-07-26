@@ -2,7 +2,7 @@ package com.terrariawiki.features.items.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.terrariawiki.features.items.data.ItemsRepository
+import com.terrariawiki.features.items.domain.ItemsRepository
 import com.terrariawiki.features.items.domain.SearchResult
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow

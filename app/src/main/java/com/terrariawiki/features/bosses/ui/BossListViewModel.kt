@@ -2,7 +2,7 @@ package com.terrariawiki.features.bosses.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.terrariawiki.features.bosses.data.BossesRepository
+import com.terrariawiki.features.bosses.domain.BossesRepository
 import com.terrariawiki.features.bosses.domain.Boss
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

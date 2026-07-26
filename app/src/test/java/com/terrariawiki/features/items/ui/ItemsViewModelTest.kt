@@ -160,7 +160,7 @@ class ItemsViewModelTest {
     @Test
     fun `ItemDetailViewModel emits Ready when item is found`() = runTest(testDispatcher) {
         coEvery { getByName("Wood") } returns Result.success(sampleItems[0])
-        val repo = mockk<com.terrariawiki.features.items.data.ItemsRepository>(relaxed = true)
+        val repo = mockk<com.terrariawiki.features.items.domain.ItemsRepository>(relaxed = true)
         coEvery { repo.getRecipes(any()) } returns Result.success(emptyList())
         val vm = ItemDetailViewModel(getByName, repo)
 
@@ -175,7 +175,7 @@ class ItemsViewModelTest {
     @Test
     fun `ItemDetailViewModel emits Error when item is null`() = runTest(testDispatcher) {
         coEvery { getByName("Nope") } returns Result.success(null)
-        val repo = mockk<com.terrariawiki.features.items.data.ItemsRepository>(relaxed = true)
+        val repo = mockk<com.terrariawiki.features.items.domain.ItemsRepository>(relaxed = true)
         val vm = ItemDetailViewModel(getByName, repo)
 
         vm.load("Nope")

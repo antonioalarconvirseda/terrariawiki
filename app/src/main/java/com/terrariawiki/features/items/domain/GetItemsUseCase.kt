@@ -1,6 +1,5 @@
 package com.terrariawiki.features.items.domain
 
-import com.terrariawiki.features.items.data.ItemsRepository
 import kotlinx.coroutines.flow.Flow
 
 class GetItemsUseCase(

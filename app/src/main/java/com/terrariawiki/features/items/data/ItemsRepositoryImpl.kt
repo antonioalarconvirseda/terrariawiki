@@ -2,33 +2,15 @@ package com.terrariawiki.features.items.data
 
 import com.terrariawiki.features.items.domain.Item
 import com.terrariawiki.features.items.domain.ItemCategory
+import com.terrariawiki.features.items.domain.ItemsRepository
 import com.terrariawiki.features.items.domain.Recipe
 import com.terrariawiki.features.items.domain.SearchResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-
-interface ItemsRepository {
-    fun observeItems(): Flow<List<Item>>
-    suspend fun refresh(): Result<Unit>
-    suspend fun search(query: String): Result<List<Item>>
-    suspend fun getByName(name: String): Result<Item?>
-
-    fun observeByCategory(category: ItemCategory): Flow<List<Item>>
-    fun observeByCategoryDirect(category: ItemCategory): StateFlow<List<Item>>
-    suspend fun refreshByCategory(category: ItemCategory): Result<Unit>
-    suspend fun loadMoreByCategory(category: ItemCategory): Result<List<Item>>
-    fun hasMoreFor(category: ItemCategory): StateFlow<Boolean>
-
-    suspend fun getRecipes(name: String): Result<List<Recipe>>
-
-    suspend fun searchAll(query: String, limit: Int = 25): Result<List<SearchResult>>
-}
 
 class ItemsRepositoryImpl(
     private val api: ItemsApi
