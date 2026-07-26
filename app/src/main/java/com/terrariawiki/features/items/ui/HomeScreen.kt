@@ -41,6 +41,8 @@ import com.terrariawiki.features.items.ui.components.InventorySlotCard
 fun HomeScreen(
     onCategoryClick: (ItemCategory) -> Unit,
     onSearchClick: () -> Unit,
+    onBossesClick: () -> Unit,
+    onEventsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -86,6 +88,70 @@ fun HomeScreen(
                     onClick = { onCategoryClick(category) }
                 )
             }
+            item(span = { GridItemSpan(maxLineSpan) }) { SectionHeader("Más allá de los items") }
+            item {
+                EntryCard(
+                    label = "Jefes",
+                    imageFile = "Animated Betsy.gif",
+                    onClick = onBossesClick
+                )
+            }
+            item {
+                EntryCard(
+                    label = "Eventos",
+                    imageFile = "Bestiary Blood Moon.png",
+                    onClick = onEventsClick
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SectionHeader(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.SemiBold,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.padding(top = Spacing.sm)
+    )
+}
+
+@Composable
+private fun EntryCard(
+    label: String,
+    imageFile: String,
+    onClick: () -> Unit
+) {
+    InventorySlotCard(
+        onClick = onClick,
+        topAccent = true,
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(1f)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(Spacing.sm),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            AsyncImage(
+                model = buildItemImageUrl(imageFile),
+                contentDescription = label,
+                modifier = Modifier.size(48.dp),
+                placeholder = androidx.compose.ui.res.painterResource(R.drawable.ic_item_placeholder),
+                error = androidx.compose.ui.res.painterResource(R.drawable.ic_item_error)
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelLarge,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(top = Spacing.xs)
+            )
         }
     }
 }

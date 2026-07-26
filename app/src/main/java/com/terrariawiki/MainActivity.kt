@@ -12,7 +12,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.ui.platform.LocalContext
 import com.terrariawiki.core.ui.theme.TerrariaWikiTheme
+import com.terrariawiki.features.bosses.ui.BossDetailScreen
+import com.terrariawiki.features.bosses.ui.BossListScreen
+import com.terrariawiki.features.events.ui.EventListScreen
 import com.terrariawiki.features.items.domain.ItemCategory
 import com.terrariawiki.features.items.ui.HomeScreen
 import com.terrariawiki.features.items.ui.ItemDetailScreen
@@ -48,7 +54,38 @@ private fun TerrariaWikiNavHost() {
                 onCategoryClick = { category ->
                     navController.navigate("category/${category.ordinal}")
                 },
-                onSearchClick = { navController.navigate("search") }
+                onSearchClick = { navController.navigate("search") },
+                onBossesClick = { navController.navigate("bosses") },
+                onEventsClick = { navController.navigate("events") }
+            )
+        }
+        composable("bosses") {
+            BossListScreen(
+                onBossClick = { name ->
+                    navController.navigate("boss/${java.net.URLEncoder.encode(name, "UTF-8")}")
+                },
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable(
+            route = "boss/{name}",
+            arguments = listOf(navArgument("name") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val encoded = backStackEntry.arguments?.getString("name").orEmpty()
+            val name = java.net.URLDecoder.decode(encoded, "UTF-8")
+            BossDetailScreen(
+                name = name,
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable("events") {
+            val context = LocalContext.current
+            EventListScreen(
+                onEventClick = { event ->
+                    val url = "https://terraria.wiki.gg/wiki/${Uri.encode(event.wikiPageTitle)}"
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                },
+                onBack = { navController.popBackStack() }
             )
         }
         composable("search") {
