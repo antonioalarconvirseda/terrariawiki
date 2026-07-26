@@ -92,3 +92,14 @@ Founding order was Items → NPCs → Enemies → Bosses → Biomes, but Craftin
 `app/build.gradle.kts` sets `unitTests.isReturnDefaultValues = true` — required for `android.util.Log` calls (used in `CoilImageLoaderFactory`) to work in local JVM unit tests without a full Android mock.
 
 Test stack: JUnit 4, MockK, Turbine (for Flow/StateFlow assertions), kotlinx-coroutines-test, OkHttp MockWebServer (for API-layer tests). Existing coverage: `ItemsMapperTest` (rarity parsing, `^`-delimited types, HTML stripping, image regex, null-stat fallback), `ItemsViewModelTest`/`SearchViewModel` tests (UiState Ready/Error/Empty, debounced search via Turbine).
+
+## graphify
+
+This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+
+Rules:
+- Always check the graph first for questions about cross-module dependencies or overall architecture — `graphify god-nodes` for hubs, `graphify path "<A>" "<B>"` for how two things connect, `graphify explain "<concept>"` for a focused subgraph.
+- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
+- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
+- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
+- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost). If the change touched architecture or dependencies (new dependency, new feature/module, a domain/data/ui layer change, a new relationship between packages), run `graphify update .` immediately — don't rely on the post-commit hook alone.
