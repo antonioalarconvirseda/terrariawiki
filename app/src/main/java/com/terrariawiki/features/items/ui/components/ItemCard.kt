@@ -1,6 +1,7 @@
 package com.terrariawiki.features.items.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,8 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.terrariawiki.R
 import com.terrariawiki.core.network.buildItemImageUrl
+import com.terrariawiki.core.ui.theme.InventorySlotBorderColor
+import com.terrariawiki.core.ui.theme.InventorySlotBorderWidth
 import com.terrariawiki.features.items.domain.Item
 
 @Composable
@@ -36,15 +37,10 @@ fun ItemCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
+    InventorySlotCard(
         onClick = onClick,
         modifier = modifier
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            .fillMaxWidth()
     ) {
         Row(
             modifier = Modifier
@@ -104,7 +100,8 @@ fun ItemThumbnail(
         modifier = modifier
             .size(size)
             .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant),
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .border(InventorySlotBorderWidth, InventorySlotBorderColor, RoundedCornerShape(8.dp)),
         contentAlignment = Alignment.Center
     ) {
         if (imageModel != null) {

@@ -13,7 +13,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.terrariawiki.core.ui.theme.rarityColor
+import com.terrariawiki.core.ui.theme.InventorySlotBorderWidth
+import com.terrariawiki.features.items.domain.RarityTier
 
 @Composable
 fun RarityChip(
@@ -21,24 +22,15 @@ fun RarityChip(
     large: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    val backgroundColor = when (rarity) {
-        -1 -> Color(0xFF1A1A1A)
-        0 -> Color(0xFFE5E5E5)
-        else -> rarityColor(rarity)
-    }
-    val textColor = when (rarity) {
-        -1 -> Color.White
-        0 -> Color(0xFF333333)
-        else -> Color.White
-    }
+    val tier = RarityTier.fromLevel(rarity)
     val shape = RoundedCornerShape(if (large) 12.dp else 8.dp)
     Box(
         modifier = modifier
             .clip(shape)
-            .background(backgroundColor)
+            .background(Color(tier.colorHex))
             .border(
-                width = 1.dp,
-                color = Color.Black.copy(alpha = 0.15f),
+                width = InventorySlotBorderWidth,
+                color = Color.Black.copy(alpha = 0.25f),
                 shape = shape
             )
             .padding(
@@ -47,28 +39,11 @@ fun RarityChip(
             )
     ) {
         Text(
-            text = rarityLabel(rarity),
+            text = tier.label,
             style = if (large) MaterialTheme.typography.labelLarge
             else MaterialTheme.typography.labelSmall,
-            color = textColor,
+            color = Color(tier.textColorHex),
             fontWeight = FontWeight.SemiBold
         )
     }
-}
-
-private fun rarityLabel(level: Int): String = when (level) {
-    -1 -> "Master"
-    0 -> "Común"
-    1 -> "Azul"
-    2 -> "Verde"
-    3 -> "Amarillo"
-    4 -> "Naranja"
-    5 -> "Rojo claro"
-    6 -> "Rosa"
-    7 -> "Lila"
-    8 -> "Violeta"
-    9 -> "Ambiguo"
-    10 -> "Raro"
-    11 -> "Experto"
-    else -> "Nivel $level"
 }

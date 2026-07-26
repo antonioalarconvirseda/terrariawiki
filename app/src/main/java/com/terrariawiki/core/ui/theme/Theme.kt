@@ -36,28 +36,30 @@ private val TerrariaLightColors = lightColorScheme(
     outline = StoneGray
 )
 
+// "Cielo Nocturno": fondo azul índigo + los mismos acentos vivos del modo claro (no una paleta
+// propia tipo lava) — reemplaza "Underworld" (naranja/marrón), que no convenció al usuario.
 private val TerrariaDarkColors = darkColorScheme(
     primary = SkyTeal,
-    onPrimary = CaveDark,
+    onPrimary = StarlightWhite,
     primaryContainer = SkyTeal.copy(alpha = 0.25f),
-    onPrimaryContainer = CloudWhite,
+    onPrimaryContainer = StarlightWhite,
     secondary = JungleGreen,
-    onSecondary = CloudWhite,
+    onSecondary = StarlightWhite,
     secondaryContainer = JungleGreen.copy(alpha = 0.25f),
-    onSecondaryContainer = CloudWhite,
+    onSecondaryContainer = StarlightWhite,
     tertiary = GoldGem,
-    onTertiary = CaveDark,
+    onTertiary = NightBackground,
     tertiaryContainer = GoldGem.copy(alpha = 0.25f),
-    onTertiaryContainer = CaveDark,
+    onTertiaryContainer = NightBackground,
     error = SlimeRed,
-    onError = CloudWhite,
-    background = CaveDark,
-    onBackground = CloudWhite,
-    surface = CaveDark,
-    onSurface = CloudWhite,
-    surfaceVariant = CloudWhite.copy(alpha = 0.10f),
-    onSurfaceVariant = CloudWhite.copy(alpha = 0.70f),
-    outline = CloudWhite.copy(alpha = 0.40f)
+    onError = StarlightWhite,
+    background = NightBackground,
+    onBackground = StarlightWhite,
+    surface = NightSurface,
+    onSurface = StarlightWhite,
+    surfaceVariant = NightSurfaceAlt,
+    onSurfaceVariant = StarlightWhite.copy(alpha = 0.70f),
+    outline = NightOutline
 )
 
 @Composable
@@ -79,6 +81,7 @@ fun TerrariaWikiTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = TerrariaTypography,
+        shapes = TerrariaShapes,
         content = content
     )
 }

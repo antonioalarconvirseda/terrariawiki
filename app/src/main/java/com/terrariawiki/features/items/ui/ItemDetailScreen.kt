@@ -17,8 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -42,6 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.terrariawiki.features.items.domain.Item
 import com.terrariawiki.features.items.domain.Recipe
 import com.terrariawiki.features.items.ui.components.ErrorState
+import com.terrariawiki.features.items.ui.components.InventorySlotCard
 import com.terrariawiki.features.items.ui.components.ItemThumbnail
 import com.terrariawiki.features.items.ui.components.ItemTypeChips
 import com.terrariawiki.features.items.ui.components.LoadingState
@@ -244,12 +243,9 @@ private fun ItemDetailContent(item: Item, recipes: List<Recipe> = emptyList()) {
 
 @Composable
 private fun DetailHeader(item: Item) {
-    Card(
+    InventorySlotCard(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
+        shape = MaterialTheme.shapes.large
     ) {
         Column(
             modifier = Modifier
@@ -282,7 +278,7 @@ private fun HardmodeBadge() {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(Color(0xFFFF8A3D))
+            .background(MaterialTheme.colorScheme.tertiary)
             .padding(horizontal = 10.dp, vertical = 4.dp)
     ) {
         Text(
@@ -320,14 +316,7 @@ private fun DetailSection(
     title: String,
     content: @Composable () -> Unit
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-    ) {
+    InventorySlotCard(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
