@@ -164,4 +164,20 @@ class ItemsMapperTest {
         val item = dto.toDomain()
         assertEquals("FromWikitext.png", item.imageFilename)
     }
+
+    @Test
+    fun `treats Cargo literal None as absent for internalname, imagefile and stack`() {
+        val dto = ItemDto(
+            name = "Adamantite armor",
+            internalname = "None",
+            imageFile = "None",
+            stack = "None"
+        )
+
+        val item = dto.toDomain()
+
+        assertNull(item.internalName)
+        assertNull(item.imageFilename)
+        assertNull(item.stack)
+    }
 }

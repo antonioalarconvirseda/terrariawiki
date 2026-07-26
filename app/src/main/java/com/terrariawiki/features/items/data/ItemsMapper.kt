@@ -4,6 +4,10 @@ import com.terrariawiki.features.items.domain.Item
 
 private const val LIST_DELIMITER = "^"
 
+/** MediaWiki Cargo returns the literal string "None" (not JSON null) for unset scalar fields. */
+private fun String?.cargoValueOrNull(): String? =
+    this?.takeIf { it.isNotBlank() && it != "None" }
+
 fun ItemDto.toDomain(): Item {
     val types = type.split(LIST_DELIMITER).filter { it.isNotBlank() }
     val categories = listCat?.split(LIST_DELIMITER)?.filter { it.isNotBlank() }.orEmpty()
@@ -11,7 +15,7 @@ fun ItemDto.toDomain(): Item {
         name = name,
         types = types,
         rarity = rare.toIntOrNull() ?: 0,
-        tooltip = tooltip?.takeIf { it.isNotBlank() }?.stripHtml(),
+        tooltip = tooltip.cargoValueOrNull()?.stripHtml(),
         damage = damage?.toIntOrNull(),
         defense = defense?.toIntOrNull(),
         knockback = knockback?.toFloatOrNull(),
@@ -21,12 +25,12 @@ fun ItemDto.toDomain(): Item {
         autoSwing = autoswing == "1",
         sellRaw = extractSellValue(sell),
         buyRaw = extractSellValue(buy),
-        internalName = internalname?.takeIf { it.isNotBlank() },
+        internalName = internalname.cargoValueOrNull(),
         wikiId = itemid?.toIntOrNull(),
-        imageFilename = imageFile?.takeIf { it.isNotBlank() }
+        imageFilename = imageFile.cargoValueOrNull()
             ?: image?.extractFileName(),
         listCategories = categories,
-        stack = stack?.takeIf { it.isNotBlank() },
+        stack = stack.cargoValueOrNull(),
         hardmode = hardmode == "1"
     )
 }
