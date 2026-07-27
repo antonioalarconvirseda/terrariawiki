@@ -18,7 +18,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,13 +36,16 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.terrariawiki.core.ui.components.DetailSection
+import com.terrariawiki.core.ui.components.ErrorState
+import com.terrariawiki.core.ui.components.InventorySlotCard
+import com.terrariawiki.core.ui.components.LoadingState
+import com.terrariawiki.core.ui.components.StatRow
+import com.terrariawiki.core.ui.theme.Spacing
 import com.terrariawiki.features.items.domain.Item
 import com.terrariawiki.features.items.domain.Recipe
-import com.terrariawiki.features.items.ui.components.ErrorState
-import com.terrariawiki.features.items.ui.components.InventorySlotCard
 import com.terrariawiki.features.items.ui.components.ItemThumbnail
 import com.terrariawiki.features.items.ui.components.ItemTypeChips
-import com.terrariawiki.features.items.ui.components.LoadingState
 import com.terrariawiki.features.items.ui.components.RarityChip
 import org.koin.androidx.compose.koinViewModel
 
@@ -68,7 +70,7 @@ fun ItemDetailScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Detalle",
+                        text = (uiState as? ItemDetailViewModel.UiState.Ready)?.item?.name ?: "Detalle",
                         style = MaterialTheme.typography.titleLarge
                     )
                 },
@@ -94,7 +96,7 @@ fun ItemDetailScreen(
                 .fillMaxSize()
         ) {
             when (val state = uiState) {
-                is ItemDetailViewModel.UiState.Loading -> LoadingState()
+                is ItemDetailViewModel.UiState.Loading -> LoadingState(message = "Cargando item…")
                 is ItemDetailViewModel.UiState.Error -> ErrorState(
                     message = state.message,
                     onRetry = { viewModel.load(name) }
@@ -114,8 +116,8 @@ private fun ItemDetailContent(item: Item, recipes: List<Recipe> = emptyList()) {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(Spacing.lg),
+        verticalArrangement = Arrangement.spacedBy(Spacing.lg)
     ) {
         DetailHeader(item = item)
 
@@ -153,7 +155,7 @@ private fun ItemDetailContent(item: Item, recipes: List<Recipe> = emptyList()) {
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(Spacing.xs))
                     recipe.ingredients.forEach { (name, qty) ->
                         Text(
                             text = "  • $name × $qty",
@@ -162,7 +164,7 @@ private fun ItemDetailContent(item: Item, recipes: List<Recipe> = emptyList()) {
                         )
                     }
                     if (recipe != recipes.last()) {
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(Spacing.sm))
                     }
                 }
             }
@@ -237,7 +239,7 @@ private fun ItemDetailContent(item: Item, recipes: List<Recipe> = emptyList()) {
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Spacing.lg))
     }
 }
 
@@ -250,12 +252,12 @@ private fun DetailHeader(item: Item) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(Spacing.xl),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(Spacing.sm)
         ) {
             ItemThumbnail(item = item, size = 128.dp)
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Spacing.sm))
             Text(
                 text = item.name,
                 style = MaterialTheme.typography.headlineMedium,
@@ -306,54 +308,6 @@ private fun CategoryChip(text: String) {
         Text(
             text = text,
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-    }
-}
-
-@Composable
-private fun DetailSection(
-    title: String,
-    content: @Composable () -> Unit
-) {
-    InventorySlotCard(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
-            content()
-        }
-    }
-}
-
-@Composable
-private fun StatRow(label: String, value: String?) {
-    if (value == null) return
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 2.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurface
         )
     }

@@ -29,11 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.terrariawiki.core.ui.components.EmptyState
+import com.terrariawiki.core.ui.components.ErrorState
+import com.terrariawiki.core.ui.components.LoadingState
+import com.terrariawiki.core.ui.theme.Spacing
 import com.terrariawiki.features.items.domain.ItemCategory
-import com.terrariawiki.features.items.ui.components.EmptyState
-import com.terrariawiki.features.items.ui.components.ErrorState
 import com.terrariawiki.features.items.ui.components.ItemCard
-import com.terrariawiki.features.items.ui.components.LoadingState
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -92,7 +93,7 @@ fun ItemsByCategoryScreen(
                 .fillMaxSize()
         ) {
             when (val state = uiState) {
-                is CategoryViewModel.UiState.Loading -> LoadingState()
+                is CategoryViewModel.UiState.Loading -> LoadingState(message = "Cargando items de Terraria…")
                 is CategoryViewModel.UiState.Error -> ErrorState(
                     message = state.message,
                     onRetry = { viewModel.retry() }
@@ -105,8 +106,8 @@ fun ItemsByCategoryScreen(
                     val items = state.items
                     LazyColumn(
                         state = listState,
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(horizontal = Spacing.lg, vertical = Spacing.sm),
+                        verticalArrangement = Arrangement.spacedBy(Spacing.sm),
                         modifier = Modifier.fillMaxSize()
                     ) {
                         itemsIndexed(
@@ -133,13 +134,13 @@ private fun LoadingFooter() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(Spacing.lg),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
             color = MaterialTheme.colorScheme.primary,
             strokeWidth = 2.dp,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(Spacing.sm)
         )
     }
 }

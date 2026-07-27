@@ -1,4 +1,4 @@
-package com.terrariawiki.features.items.ui.components
+package com.terrariawiki.core.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -23,7 +23,7 @@ import com.terrariawiki.core.ui.theme.JungleGreen
 
 /**
  * Card compartida con el look "slot de inventario" de Terraria: esquinas moderadas
- * + borde sólido, en vez de que cada pantalla reimplemente su propia Card.
+ * + borde sólido, en vez de que cada feature reimplemente su propia Card.
  * `topAccent` añade una franja de hierba arriba, imitando el filo tupido de un bloque de tierra.
  */
 @Composable

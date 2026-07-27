@@ -34,7 +34,7 @@ import com.terrariawiki.R
 import com.terrariawiki.core.network.buildItemImageUrl
 import com.terrariawiki.core.ui.theme.Spacing
 import com.terrariawiki.features.items.domain.ItemCategory
-import com.terrariawiki.features.items.ui.components.InventorySlotCard
+import com.terrariawiki.core.ui.components.InventorySlotCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

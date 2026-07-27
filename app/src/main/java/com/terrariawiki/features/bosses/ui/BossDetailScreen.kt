@@ -3,7 +3,6 @@ package com.terrariawiki.features.bosses.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +13,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,11 +28,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.terrariawiki.core.ui.components.DetailSection
+import com.terrariawiki.core.ui.components.ErrorState
+import com.terrariawiki.core.ui.components.InventorySlotCard
+import com.terrariawiki.core.ui.components.LoadingState
+import com.terrariawiki.core.ui.components.StatRow
+import com.terrariawiki.core.ui.theme.Spacing
 import com.terrariawiki.features.bosses.domain.Boss
 import com.terrariawiki.features.bosses.ui.components.BossThumbnail
-import com.terrariawiki.features.bosses.ui.components.ErrorState
-import com.terrariawiki.features.bosses.ui.components.InventorySlotCard
-import com.terrariawiki.features.bosses.ui.components.LoadingState
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,7 +56,12 @@ fun BossDetailScreen(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text(text = "Detalle", style = MaterialTheme.typography.titleLarge) },
+                title = {
+                    Text(
+                        text = (uiState as? BossDetailViewModel.UiState.Ready)?.boss?.name ?: "Detalle",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -78,7 +84,7 @@ fun BossDetailScreen(
                 .fillMaxSize()
         ) {
             when (val state = uiState) {
-                is BossDetailViewModel.UiState.Loading -> LoadingState()
+                is BossDetailViewModel.UiState.Loading -> LoadingState(message = "Cargando jefe…")
                 is BossDetailViewModel.UiState.Error -> ErrorState(
                     message = state.message,
                     onRetry = { viewModel.load(name) }
@@ -95,8 +101,8 @@ private fun BossDetailContent(boss: Boss) {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(Spacing.lg),
+        verticalArrangement = Arrangement.spacedBy(Spacing.lg)
     ) {
         DetailHeader(boss = boss)
 
@@ -115,7 +121,7 @@ private fun BossDetailContent(boss: Boss) {
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Spacing.lg))
     }
 }
 
@@ -128,12 +134,12 @@ private fun DetailHeader(boss: Boss) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(Spacing.xl),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(Spacing.sm)
         ) {
             BossThumbnail(boss = boss, size = 128.dp)
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Spacing.sm))
             Text(
                 text = boss.name,
                 style = MaterialTheme.typography.headlineMedium,
@@ -141,53 +147,5 @@ private fun DetailHeader(boss: Boss) {
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
-    }
-}
-
-@Composable
-private fun DetailSection(
-    title: String,
-    content: @Composable () -> Unit
-) {
-    InventorySlotCard(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
-            content()
-        }
-    }
-}
-
-@Composable
-private fun StatRow(label: String, value: String?) {
-    if (value == null) return
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 2.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurface
-        )
     }
 }

@@ -35,11 +35,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.terrariawiki.core.ui.components.EmptyState
+import com.terrariawiki.core.ui.components.ErrorState
+import com.terrariawiki.core.ui.components.InventorySlotCard
+import com.terrariawiki.core.ui.components.LoadingState
+import com.terrariawiki.core.ui.theme.Spacing
 import com.terrariawiki.features.items.domain.SearchResult
-import com.terrariawiki.features.items.ui.components.EmptyState
-import com.terrariawiki.features.items.ui.components.ErrorState
-import com.terrariawiki.features.items.ui.components.InventorySlotCard
-import com.terrariawiki.features.items.ui.components.LoadingState
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,7 +111,7 @@ fun SearchScreen(
         ) {
             when (val state = uiState) {
                 is SearchViewModel.UiState.Idle -> IdleHint()
-                is SearchViewModel.UiState.Loading -> LoadingState()
+                is SearchViewModel.UiState.Loading -> LoadingState(message = "Buscando…")
                 is SearchViewModel.UiState.Empty -> EmptyState(
                     title = "Sin resultados",
                     message = "No se encontraron coincidencias para «$query»."
@@ -133,7 +134,7 @@ private fun IdleHint() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(Spacing.xxl),
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -150,14 +151,14 @@ private fun ResultsList(
     onResultClick: (String) -> Unit
 ) {
     LazyColumn(
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = Spacing.lg, vertical = Spacing.sm),
+        verticalArrangement = Arrangement.spacedBy(Spacing.sm),
         modifier = Modifier.fillMaxSize()
     ) {
         items(results, key = { it.pageId }) { result ->
             ResultCard(result = result, onClick = { onResultClick(result.title) })
         }
-        item { Box(modifier = Modifier.height(16.dp)) }
+        item { Box(modifier = Modifier.height(Spacing.lg)) }
     }
 }
 
@@ -170,7 +171,7 @@ private fun ResultCard(result: SearchResult, onClick: () -> Unit) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(Spacing.lg),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(

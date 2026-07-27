@@ -20,12 +20,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.terrariawiki.core.ui.components.EmptyState
+import com.terrariawiki.core.ui.components.ErrorState
+import com.terrariawiki.core.ui.components.LoadingState
+import com.terrariawiki.core.ui.theme.Spacing
 import com.terrariawiki.features.bosses.ui.components.BossCard
-import com.terrariawiki.features.bosses.ui.components.EmptyState
-import com.terrariawiki.features.bosses.ui.components.ErrorState
-import com.terrariawiki.features.bosses.ui.components.LoadingState
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,7 +65,7 @@ fun BossListScreen(
                 .fillMaxSize()
         ) {
             when (val state = uiState) {
-                is BossListViewModel.UiState.Loading -> LoadingState()
+                is BossListViewModel.UiState.Loading -> LoadingState(message = "Cargando jefes de Terraria…")
                 is BossListViewModel.UiState.Error -> ErrorState(
                     message = state.message,
                     onRetry = { viewModel.retry() }
@@ -76,8 +76,8 @@ fun BossListScreen(
                 )
                 is BossListViewModel.UiState.Ready -> {
                     LazyColumn(
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(horizontal = Spacing.lg, vertical = Spacing.sm),
+                        verticalArrangement = Arrangement.spacedBy(Spacing.sm),
                         modifier = Modifier.fillMaxSize()
                     ) {
                         itemsIndexed(

@@ -1,5 +1,8 @@
-package com.terrariawiki.features.items.ui.components
+package com.terrariawiki.core.ui.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,23 +22,29 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.terrariawiki.core.ui.theme.InventorySlotBorderColor
+import com.terrariawiki.core.ui.theme.InventorySlotBorderWidth
+import com.terrariawiki.core.ui.theme.Spacing
 
 @Composable
-fun LoadingState(modifier: Modifier = Modifier) {
+fun LoadingState(
+    message: String,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            CircularProgressIndicator(
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+            Spacer(modifier = Modifier.height(Spacing.lg))
             Text(
-                text = "Cargando items de Terraria…",
+                text = message,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -52,19 +61,21 @@ fun ErrorState(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(Spacing.xxl),
         contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(Spacing.md)
         ) {
-            Icon(
-                imageVector = Icons.Filled.Error,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.error,
-                modifier = Modifier.size(64.dp)
-            )
+            StateSlot(borderColor = MaterialTheme.colorScheme.error) {
+                Icon(
+                    imageVector = Icons.Filled.Error,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
             Text(
                 text = "Algo salió mal",
                 style = MaterialTheme.typography.titleLarge,
@@ -76,7 +87,7 @@ fun ErrorState(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Spacing.sm))
             Button(onClick = onRetry) {
                 Text("Reintentar")
             }
@@ -86,27 +97,29 @@ fun ErrorState(
 
 @Composable
 fun EmptyState(
-    title: String = "Sin resultados",
-    message: String = "No encontramos items que coincidan con tu búsqueda.",
-    icon: ImageVector = Icons.Filled.SearchOff,
-    modifier: Modifier = Modifier
+    title: String,
+    message: String,
+    modifier: Modifier = Modifier,
+    icon: ImageVector = Icons.Filled.SearchOff
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(Spacing.xxl),
         contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(Spacing.md)
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(72.dp)
-            )
+            StateSlot(borderColor = InventorySlotBorderColor) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(40.dp)
+                )
+            }
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
@@ -119,5 +132,26 @@ fun EmptyState(
                 textAlign = TextAlign.Center
             )
         }
+    }
+}
+
+/**
+ * Slot vacío/roto con el mismo lenguaje visual que [InventorySlotCard]: caja bordeada
+ * de "inventario" en vez de un ícono Material flotando sin contexto.
+ */
+@Composable
+private fun StateSlot(
+    borderColor: Color,
+    content: @Composable () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .size(72.dp)
+            .clip(MaterialTheme.shapes.medium)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .border(BorderStroke(InventorySlotBorderWidth, borderColor), MaterialTheme.shapes.medium),
+        contentAlignment = Alignment.Center
+    ) {
+        content()
     }
 }
