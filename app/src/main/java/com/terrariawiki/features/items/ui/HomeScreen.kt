@@ -92,7 +92,7 @@ fun HomeScreen(
             item {
                 EntryCard(
                     label = "Jefes",
-                    imageFile = "Animated Betsy.gif",
+                    imageFile = "King Slime.gif",
                     onClick = onBossesClick
                 )
             }
