@@ -6,15 +6,15 @@ App Android nativa (Kotlin + Jetpack Compose) que consume la API pública de la 
 
 ## Estado
 
-**MVP funcional.** Implementa la sección de **Items** con:
+**Más allá del MVP.** Implementa las secciones de **Items**, **Bosses** y **Events**:
 
-- Lista de 50 items por defecto.
-- Búsqueda local por nombre o tipo (con debounce 250 ms).
-- Ficha de detalle con imagen (Coil), rareza color-coded, tipos, descripción, estadísticas (daño, defensa, retroceso, velocidad de uso), precio de venta e identificadores.
-- Manejo de estados de UI: Loading / Ready / Empty / Error (con botón Reintentar).
-- Tema personalizado con paleta inspirada en Terraria 1.4 (Sky Teal, Jungle Green, Gold Gem, Slime Red, Hell Orange, Cave Dark).
+- **Items**: listado por categoría con paginación, búsqueda local por nombre o tipo (debounce 250 ms), ficha de detalle con imagen (Coil), rareza color-coded, tipos, descripción, estadísticas (daño, defensa, retroceso, velocidad de uso), precio de venta, identificadores y **recetas de crafteo**.
+- **Bosses**: listado y ficha de detalle por boss.
+- **Events**: catálogo estático de eventos (aún sin endpoint propio en la Cargo API).
+- Manejo de estados de UI: Loading / Ready / Empty / Error (con botón Reintentar) en todas las features.
+- Tema personalizado con paleta inspirada en Terraria 1.4 (Sky Teal, Jungle Green, Gold Gem, Slime Red, Hell Orange, Cave Dark), con **modo oscuro "Underworld"**.
 
-> Roadmap inmediato (siguientes iteraciones): NPCs, Enemigos, Bosses, Biomas.
+> Roadmap: pendiente decidir entre NPCs, Enemigos, cache offline con Room, o migración real a Kotlin Multiplatform (`:shared` + `:android-app`).
 
 ## Stack tecnológico
 
@@ -39,15 +39,26 @@ app/src/main/java/com/terrariawiki/
 ├── TerrariaWikiApp.kt           # Application + startKoin
 ├── MainActivity.kt              # NavHost root
 ├── core/
-│   ├── network/                 # HttpClientFactory (Ktor + OkHttp)
+│   ├── network/                 # HttpClientFactory (Ktor+OkHttp), CoilImageLoaderFactory
 │   ├── di/                      # networkModule (Koin)
-│   ├── ui/theme/                # Color, Theme, Type (paleta Terraria 1.4)
+│   ├── ui/
+│   │   ├── theme/               # Color, Theme, Type (paleta Terraria 1.4)
+│   │   └── components/          # StateScreens, InventorySlotCard, WikiThumbnail, DetailSection
 │   └── util/
-└── features/items/
-    ├── data/                    # ItemsApi, ItemsDto, ItemsMapper, ItemsRepository
-    ├── domain/                  # Item, GetItemsUseCase, SearchItemsUseCase, GetItemByNameUseCase
-    ├── di/                      # itemsModule
-    └── ui/                      # ItemsScreen, ItemDetailScreen, ViewModels, navigation
+└── features/
+    ├── items/
+    │   ├── data/                # ItemsApi, ItemsDto, ItemsMapper, ItemsRepositoryImpl
+    │   ├── domain/               # Item, Recipe, ItemsRepository, *UseCase
+    │   ├── di/                  # itemsModule
+    │   └── ui/                  # Screens, ViewModels, components/, navigation/
+    ├── bosses/
+    │   ├── data/                # BossesApi, BossesDto, BossesMapper, BossesRepositoryImpl
+    │   ├── domain/               # Boss, BossesRepository, *UseCase
+    │   ├── di/                  # bossesModule
+    │   └── ui/                  # Screens, ViewModels, components/
+    └── events/
+        ├── domain/               # Event, EventCatalog (catálogo estático, sin data/ propio)
+        └── ui/                   # EventListScreen
 ```
 
 Regla de dependencias: `ui → domain ← data`. La capa `domain` no conoce Ktor ni Compose.
@@ -81,9 +92,10 @@ APK generado: `app/build/outputs/apk/debug/app-debug.apk`
 ./gradlew :app:testDebugUnitTest
 ```
 
-15 tests unitarios:
-- `ItemsMapperTest` (9): parsing de rareza, tipos con delimitador `^`, stats nulas, HTML stripping, regex de imagen, fallback a 0.
-- `ItemsViewModelTest` (6): estados Ready / Error / Empty de UiState, búsqueda con debounce, ItemDetailViewModel Ready / Error.
+12 clases de test:
+- **items**: `ItemsMapperTest`, `RecipesMapperTest`, `RarityTierTest` (parsing de rareza, tipos con delimitador `^`, stats nulas, HTML stripping, regex de imagen), `ItemsViewModelTest`, `CategoryViewModelTest`, `SearchViewModelTest` (estados Ready / Error / Empty, búsqueda con debounce vía Turbine).
+- **bosses**: `BossesMapperTest`, `BossListViewModelTest`, `BossDetailViewModelTest`.
+- **core/network**: `ImageUrlTest`, `TokenBucketInterceptorTest`, `UserAgentInterceptorTest`.
 
 ## Créditos y atribuciones
 

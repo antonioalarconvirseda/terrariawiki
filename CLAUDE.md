@@ -38,7 +38,9 @@ MainActivity.kt           # NavHost root
 core/
   network/                # HttpClientFactory (Ktor+OkHttp client), CoilImageLoaderFactory (image loader + interceptors)
   di/                      # networkModule (Koin)
-  ui/theme/                # Color, Theme, Type — Terraria 1.4 palette
+  ui/
+    theme/                 # Color, Theme, Type — Terraria 1.4 palette
+    components/            # StateScreens, InventorySlotCard, WikiThumbnail, DetailSection — shared across features
   util/
 features/items/
   data/                    # ItemsApi/ItemsApiImpl (Ktor calls to Cargo API), *Dto, *Mapper (dto -> domain), ItemsRepositoryImpl
